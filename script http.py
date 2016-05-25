@@ -36,8 +36,7 @@ def launcherFunction(menu):
     elif menu == 'q':
         QuitBookMgr()
     elif menu == 'p':     
- #       print(HospitalDoc.read(cLen).decode('utf-8') ) 
-        extractBookData(HospitalDoc.read(cLen).decode('utf-8'))
+        extractBookData(HospitalDoc.read().decode('utf-8'))
 #    elif menu == 'b':
 #        PrintBookList(["title",])    
 #    elif menu == 'e':
@@ -49,26 +48,25 @@ def launcherFunction(menu):
 
 def extractBookData(strXml):
     from xml.etree import ElementTree
-    tree=ElementTree.fromstring(strXml)
-    itemElements=tree.getiterator("item")
-    print(itemElements)
+    tree = ElementTree.fromstring(strXml)
+    # Book 엘리먼트를 가져옵니다.
+    itemElements = tree.getiterator("item")  # return list type
     for item in itemElements:
-        addr = item.find("addr")
-        print(addr)
-        if len(addr.text)>0:
-            return {"addr":addr.text}
+        strTitle = item.find("yadmNm")
+        if len(strTitle.text) > 0 :
+            print("yadmNm : ",strTitle.text)
+   
 
 
 def LoadXMLFromHTTP():
     global HospitalDoc
-    global cLen
     conn = http.client.HTTPConnection("openapi.hira.or.kr")
     sidoName ="sidoCd="+ str(input ("please input sido name to load :"))+"&"  # 읽어올 파일경로를 입력 받습니다.
-    sgguName = "sgguCd="+str(input ("please input sido name to load :"))+"&"  # 읽어올 파일경로를 입력 받습니다.
+    sgguName = "sgguCd="+str(input ("please input sggu name to load :"))+"&"  # 읽어올 파일경로를 입력 받습니다.
    
-    conn.request("GET", "/openapi/service/hospInfoService/getHospBasisList?"+sidoName+sgguName+"ServiceKey=Id4vjBVQEtf9S3cDoQcUnmSSidJLPlzQIflfPq2Nr2n6CTK5OBvtYqDU3T0skasLZybrxivIfIXiNXRs1%2Bhdlg%3D%3D") 
+    conn.request("GET", "/openapi/service/hospInfoService/getHospBasisList?"+sidoName+sgguName+"numOfRows=1000&ServiceKey=Id4vjBVQEtf9S3cDoQcUnmSSidJLPlzQIflfPq2Nr2n6CTK5OBvtYqDU3T0skasLZybrxivIfIXiNXRs1%2Bhdlg%3D%3D") 
     req = conn.getresponse()   
-    cLen = req.getheader("Content-Length")
+    print(req.status,req.reason)
     HospitalDoc=req
     return None
   
