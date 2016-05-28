@@ -67,12 +67,16 @@ def extractBookData(strXml):
 
 def LoadXMLFromHTTP():
     global HospitalDoc,Code
-    Code={'서울':'110000'}
+    Code={'서울':'110000','부산':'210000','인천':'220000'
+    ,'대구':'230000','경남':'380000','경기':'310000',
+    '충남':'340000','강원':'320000','전북':'350000','광주':'240000'
+    ,'충북':'330000','울산':'260000','전남':'360000','대전':'250000'
+    ,'경북':'370000','제주':'390000','세종시':'410000'}
     conn = HTTPConnection("openapi.hira.or.kr")
     sido=str(input ("please input sido name to load :"))
     print(Code[sido])
-    sidoName ="sidoCdNm="+ Code[sido]+"&"  # 읽어올 파일경로를 입력 받습니다.
-    sgguName = "sgguCdNm="+quote(input ("please input sggu name to load :"))+"&"  # 읽어올 파일경로를 입력 받습니다.
+    sidoName ="sidoCd="+ Code[sido]+"&"  # 읽어올 파일경로를 입력 받습니다.
+    sgguName = "sgguCd="+quote(input ("please input sggu name to load :"))+"&"  # 읽어올 파일경로를 입력 받습니다.
     print(quote(sidoName))
     conn.request("GET", "/openapi/service/hospInfoService/getHospBasisList?"+sidoName+sgguName+"numOfRows=1000&ServiceKey=Id4vjBVQEtf9S3cDoQcUnmSSidJLPlzQIflfPq2Nr2n6CTK5OBvtYqDU3T0skasLZybrxivIfIXiNXRs1%2Bhdlg%3D%3D") 
     req = conn.getresponse()   
