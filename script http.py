@@ -14,6 +14,8 @@ from urllib.parse   import quote
 loopFlag = 1
 xmlFD = -1
 BooksDoc = None
+sidoName=None
+Hname=None
 
 #### Menu  implementation
 def printMenu():
@@ -29,16 +31,20 @@ def printMenu():
 
 
 def launcherFunction(menu):
-    global HospitalDoc
-    global cLen
+    global HospitalDoc, Code, sidoName, Hname
     if menu ==  'l':
         LoadXMLFromHTTP()  
     elif menu == 'q':
         QuitBookMgr()
     elif menu=='h':
         LoadHospitalName()
-    elif menu == 'p':     
-        extractBookData(HospitalDoc.read().decode('utf-8'))
+    elif menu == 'p':
+        if sidoName==None:
+            print("시,도에대한 정보가없습니다.")
+        elif Hname==None:
+            print("병원이름에대한정보가없습니다.")
+        else :
+            extractBookData(HospitalDoc.read().decode('utf-8'))
 #    elif menu == 'b':
 #        PrintBookList(["title",])    
 #    elif menu == 'e':
@@ -70,6 +76,7 @@ def extractBookData(strXml):
     tree = ElementTree.fromstring(strXml)
     # Book 엘리먼트를 가져옵니다.
     itemElements = tree.getiterator("item")  # return list type
+    print("-------------------------------")
     for item in itemElements:
         sidoTitle = item.find("sidoCdNm")
         yadmNmTitle=item.find("yadmNm")
@@ -77,6 +84,7 @@ def extractBookData(strXml):
             print("시,도 위치 : ",sidoTitle.text)
         if len(yadmNmTitle.text)>0:
             print("병원이름 : ",yadmNmTitle.text)
+        print("-------------------------------")
     ReLoadHTTP()
    
 
@@ -88,7 +96,7 @@ def LoadXMLFromHTTP():
     '충남':'340000','강원':'320000','전북':'350000','광주':'240000'
     ,'충북':'330000','울산':'260000','전남':'360000','대전':'250000'
     ,'경북':'370000','제주':'390000','세종시':'410000'}
-
+    print(list(Code.keys()))
     conn = HTTPConnection("openapi.hira.or.kr")
     sido=str(input ("please input sido name to load :"))
     sidoName ="sidoCd="+ Code[sido]+"&"  # 읽어올 파일경로를 입력 받습니다.
@@ -101,7 +109,7 @@ def LoadXMLFromHTTP():
 def ReLoadHTTP():
     global HospitalDoc, Code, sidoName,Hname
     conn = HTTPConnection("openapi.hira.or.kr")
-    if conn!=None:
+    if sidoName!=None:
         conn.request("GET","/openapi/service/hospInfoService/getHospBasisList?" + sidoName+ Hname + "numOfRows=1000&ServiceKey=Id4vjBVQEtf9S3cDoQcUnmSSidJLPlzQIflfPq2Nr2n6CTK5OBvtYqDU3T0skasLZybrxivIfIXiNXRs1%2Bhdlg%3D%3D")
         req = conn.getresponse()
         print(req.status, req.reason)
