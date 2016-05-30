@@ -6,6 +6,9 @@ Created on Thu May 19 13:07:26 2016
 """
 from http.client import HTTPConnection
 from urllib.parse   import quote
+import smtplib
+from email.mime.text import MIMEText
+from email.header import Header
 
 
 
@@ -24,6 +27,7 @@ def printMenu():
     print("시에대한 HTTP 불러오기:  l")
     print("찾을 병원 이름 : h")
     print("Print: p")
+    print("mail : m")
     print("Quit program:   q")
     print("print Book list: b")
     print("sEarch Book Title: e")
@@ -45,6 +49,13 @@ def launcherFunction(menu):
             print("병원이름에대한정보가없습니다.")
         else :
             extractBookData(HospitalDoc.read().decode('utf-8'))
+    elif menu == 'm':
+        if sidoName == None:
+            print("시,도에대한 정보가없습니다.")
+        elif Hname == None:
+            print("병원이름에대한정보가없습니다.")
+        else:
+            mail();
 #    elif menu == 'b':
 #        PrintBookList(["title",])    
 #    elif menu == 'e':
@@ -87,7 +98,28 @@ def extractBookData(strXml):
         print("-------------------------------")
     ReLoadHTTP()
    
+def mail():
+    s = smtplib.SMTP("smtp.gmail.com", 587)
+    s.ehlo()
+    s.starttls()
+    s.ehlo()
+    ID = input("(gmail)ID : ") + "@gmail.com"
+    password= input("password : ")
+    senderAddr = ID # 보내는 사람
+    title = input(" 제목 : ")
+    recipientAddr = input("받는 사람:")  # 받는 사람
+    text = input(" 내용 : ")  # 보내는 내용
 
+
+    msg = MIMEText(text, _charset='utf8')
+
+    msg['Subject'] = Header(title, 'utf8')
+    msg['From'] = senderAddr
+    msg['To'] = recipientAddr
+
+    s.login(ID, password)
+    s.sendmail(senderAddr, recipientAddr, msg.as_string())
+    s.quit()
 
 def LoadXMLFromHTTP():
     global HospitalDoc,Code,sidoName
