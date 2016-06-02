@@ -9,8 +9,11 @@ from urllib.parse   import quote
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
+<<<<<<< HEAD
 from hospital import Hospihal as hospi
 from xml.etree import ElementTree
+=======
+>>>>>>> origin/master
 
 
 
