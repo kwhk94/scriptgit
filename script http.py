@@ -9,12 +9,8 @@ from urllib.parse   import quote
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
-<<<<<<< HEAD
 from hospital import Hospihal as hospi
 from xml.etree import ElementTree
-=======
->>>>>>> origin/master
-
 
 
 
@@ -35,6 +31,7 @@ def printMenu():
     print("========Menu==========")
     print("시에대한 HTTP 불러오기:  l")
     print("찾을 병원 이름 : h")
+    print("병원근처보여주기 : n")
     print("Print: p")
     print("mail : m")
     print("Quit program:   q")
@@ -58,6 +55,11 @@ def launcherFunction(menu):
             print("병원이름에대한정보가없습니다.")
         else :
             extractBookData(HospitalDoc.read().decode('utf-8'))
+    elif menu=='n':
+        if sidoName==None:
+            print("시,도에대한 정보가 없습니다")
+        else :
+            nearhospital()
     elif menu == 'm':
         if sidoName == None:
             print("시,도에대한 정보가없습니다.")
@@ -91,7 +93,7 @@ def connectOpenAPIServer():
     conn = HTTPConnection(server)
 
 def extractBookData(strXml):
-    global Hdata,sgguName
+    global Hdata,sgguName, m_count
     tree = ElementTree.fromstring(strXml)
     # Book 엘리먼트를 가져옵니다.
     itemElements = tree.getiterator("item")  # return list type
@@ -103,12 +105,62 @@ def extractBookData(strXml):
         if sgguNmTitle.text== sgguName:
             yadmname=item.find("yadmNm")
             addrname= item.find("addr")
-            data = hospi(yadmname.text,addrname.text)
-            m_count+=1
-            Hdata.append(data)
+            clname = item.find("clCdNm")
+            xpos = item.find("XPos")
+            ypos = item.find("YPos")
+            telno = item.find("telno")
+            if clname == None or yadmname == None or addrname == None or xpos == None or ypos == None or telno:
+                print("못찾음")
+            else:
+                data = hospi(yadmname.text, addrname.text, clname.text, xpos.text, ypos.text, telno.text)
+                m_count+=1
+                Hdata.append(data)
     for dada in range(m_count):
          print("병원이름 : ",Hdata[dada].yadm)
          print("주소 : ",Hdata[dada].addr)
+         print ("종별 : ",Hdata[dada].cl)
+         print("xpos,ypos : ",Hdata[dada].xpos , Hdata[dada].ypos)
+         print("병원 전화번호 :",Hdata[dada].telno)
+         print ("--------------------------------------------------------")
+    ReLoadHTTP()
+
+def nearhospital():
+    global HospitalDoc, Code, sidoName, Hname,Hdata, m_count,sgguName
+    for dada in range(m_count):
+        print("병원이름 : ", Hdata[dada].yadm)
+        print("주소 : ", Hdata[dada].addr)
+        print("종별 : ", Hdata[dada].cl)
+        print("xpos,ypos : ", Hdata[dada].xpos, Hdata[dada].ypos)
+        print("병원 전화번호 :", Hdata[dada].telno)
+        print("--------------------------------------------------------")
+    num = int(input("리스트의 몇번째 병원인가? :"))
+    print(Hdata[num].yadm)
+    ReLoadSido()
+    Neardata = []
+    tree = ElementTree.fromstring(HospitalDoc.read().decode('utf-8'))
+    itemElements = tree.getiterator("item")  # return list type
+    count=0
+    data = hospi
+    for item in itemElements:
+        sgguNmTitle = item.find("sgguCdNm")
+        # print(sgguName)
+        # print(sgguNmTitle.text)
+        if sgguNmTitle.text == sgguName:
+            yadmname = item.find("yadmNm")
+            addrname = item.find("addr")
+            clname = item.find("clCdNm")
+            xpos = item.find("XPos")
+            ypos = item.find("YPos")
+            telno = item.find("telno")
+            if clname == None or yadmname==None or addrname==None or xpos==None or ypos==None or telno:
+                print("못찾음")
+            else:
+                data = hospi(yadmname.text, addrname.text, clname.text, xpos.text, ypos.text, telno.text)
+                count += 1
+                Neardata.append(data)
+    for nana in range(count):
+        if float(Hdata[num].xpos)-1 < float(Neardata[nana].xpos) and float(Hdata[num].xpos)+1 > float(Neardata[nana].xpos) and float(Hdata[num].ypos)-1 < float(Neardata[nana].ypos)and float(Hdata[num].ypos)+1 > float(Neardata[nana].ypos):
+            print("근처병원 : ",Neardata[nana].yadm)
 
 
    
@@ -136,7 +188,7 @@ def mail():
     s.quit()
 
 def LoadXMLFromHTTP():
-    global HospitalDoc,Code,sidoName,sgguName
+    global HospitalDoc,Code,sidoName,sgguName, sidonm
     Code={'서울':'110000','부산':'210000','인천':'220000'
     ,'대구':'230000','경남':'380000','경기':'310000',
     '충남':'340000','강원':'320000','전북':'350000','광주':'240000'
@@ -145,6 +197,7 @@ def LoadXMLFromHTTP():
     print(list(Code.keys()))
     conn = HTTPConnection("openapi.hira.or.kr")
     sido=str(input ("please input sido name to load :"))
+    sidonm=sido
     sidoName ="sidoCd="+ Code[sido]+"&"  # 읽어올 파일경로를 입력 받습니다.
 
     conn.request("GET", "/openapi/service/hospInfoService/getHospBasisList?"+sidoName+"numOfRows=100&ServiceKey=Id4vjBVQEtf9S3cDoQcUnmSSidJLPlzQIflfPq2Nr2n6CTK5OBvtYqDU3T0skasLZybrxivIfIXiNXRs1%2Bhdlg%3D%3D")
@@ -182,11 +235,23 @@ def LoadXMLFromHTTP():
     HospitalDoc = req
     return None
 
-def ReLoadHTTP():
+def ReLoadHTTP():  #시와 병원이름으로 가져오기
     global HospitalDoc, Code, sidoName,Hname
     conn = HTTPConnection("openapi.hira.or.kr")
     if sidoName!=None:
         conn.request("GET","/openapi/service/hospInfoService/getHospBasisList?" + sidoName+ Hname + "numOfRows=1000&ServiceKey=Id4vjBVQEtf9S3cDoQcUnmSSidJLPlzQIflfPq2Nr2n6CTK5OBvtYqDU3T0skasLZybrxivIfIXiNXRs1%2Bhdlg%3D%3D")
+        req = conn.getresponse()
+        print(req.status, req.reason)
+        HospitalDoc = req
+        return None
+    else :
+        print("시에대한 정보가 없습니다.")
+
+def ReLoadSido():  #시와 병원이름으로 가져오기
+    global HospitalDoc, Code, sidoName,Hname
+    conn = HTTPConnection("openapi.hira.or.kr")
+    if sidoName!=None:
+        conn.request("GET","/openapi/service/hospInfoService/getHospBasisList?" + sidoName+"numOfRows=1000&ServiceKey=Id4vjBVQEtf9S3cDoQcUnmSSidJLPlzQIflfPq2Nr2n6CTK5OBvtYqDU3T0skasLZybrxivIfIXiNXRs1%2Bhdlg%3D%3D")
         req = conn.getresponse()
         print(req.status, req.reason)
         HospitalDoc = req

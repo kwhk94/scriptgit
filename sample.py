@@ -5,6 +5,7 @@ from email.mime.text import MIMEText
 from email.header import Header
 from hospital import Hospihal as hospi
 from xml.etree import ElementTree
+from hospital import Hospihal as hospi
 
 
 Code={'서울':'110000','부산':'210000','인천':'220000'
@@ -35,7 +36,28 @@ for item in itemElements:
         sggulist.append(item.find("sgguCdNm").text)
         sggunumber+=1
 
-for i in range(sggunumber):
-    if i%10==0 :
-        print()
-    print(sggulist[i],end=" ")
+Hdata = []
+
+m_count = 0
+
+for item in itemElements:
+    sgguNmTitle = item.find("sgguCdNm")
+    # print(sgguName)
+    # print(sgguNmTitle.text)
+    if sgguNmTitle.text == sgguName:
+        yadmname = item.find("yadmNm")
+        addrname = item.find("addr")
+        clname = item.find("clCdNm")
+        xpos = item.find("XPos")
+        ypos = item.find("YPos")
+        telno = item.find("telno")
+        data = hospi(yadmname.text, addrname.text, clname.text, xpos.text, ypos.text, telno.text)
+        m_count += 1
+        Hdata.append(data)
+for dada in range(m_count):
+    print("병원이름 : ", Hdata[dada].yadm)
+    print("주소 : ", Hdata[dada].addr)
+    print("종별 : ", Hdata[dada].cl)
+    print("xpos,ypos : ", Hdata[dada].xpos, Hdata[dada].ypos)
+    print("병원 전화번호 :", Hdata[dada].telno)
+    print("--------------------------------------------------------")
