@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>병원찾기</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
@@ -20,14 +20,14 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>270</x>
       <y>200</y>
-      <width>180</width>
+      <width>120</width>
       <height>80</height>
      </rect>
     </property>
     <property name="text">
-     <string>홈페이지</string>
+     <string>인근 병원</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_2">
@@ -61,12 +61,35 @@
      <rect>
       <x>10</x>
       <y>200</y>
-      <width>180</width>
+      <width>120</width>
       <height>80</height>
      </rect>
     </property>
     <property name="text">
      <string>길찾기</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>380</width>
+      <height>70</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_5">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>200</y>
+      <width>120</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>홈페이지</string>
     </property>
    </widget>
   </widget>
@@ -83,5 +106,42 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slot1_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>160</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>117</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>slot2_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>396</x>
+     <y>122</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>slot1_click()</slot>
+  <slot>slot2_click()</slot>
+ </slots>
 </ui>
