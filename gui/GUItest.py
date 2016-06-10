@@ -17,6 +17,7 @@ except AttributeError:
 
 import hosdata
 import search
+import webbrowser
 from http.client import HTTPConnection
 from urllib.parse   import quote
 import smtplib
@@ -47,6 +48,7 @@ class MyForm(QtGui.QMainWindow):
         if finaldata!=None:
             self.ui.textBrowser.append(finaldata.yadm)
             self.ui.textBrowser.append(finaldata.addr)
+            self.ui.textBrowser.append(finaldata.url)
        # self.show(self)
 
     def slot1_click(self):
@@ -54,6 +56,30 @@ class MyForm(QtGui.QMainWindow):
          self.search.show()
          self.close()
          return
+
+    def slot2_click(self):
+        if finaldata!=None:
+            if finaldata.xpos!=None and finaldata.ypos!=None:
+                url='https://www.google.co.kr/maps/@'+finaldata.ypos+','+finaldata.xpos+',17z'
+                webbrowser.open_new(url)
+            else:
+                print("좌표가없습니다")
+                self.ui.textBrowser.append("좌표가없습니다")
+
+    def slot3_click(self):
+        if finaldata!=None:
+            if finaldata.url!=None:
+                url = finaldata.url
+                webbrowser.open_new(url)
+            else:
+                print("주소가없습니다.")
+                self.ui.textBrowser.append("주소가없습니다")
+
+
+
+
+
+
 
 class SearchForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -139,18 +165,26 @@ class SearchForm(QtGui.QMainWindow):
             for item in itemElements:
                 sgguNmTitle = item.find("sgguCdNm")
                 if sgguNmTitle.text == ssgname:
-                    yadmname = item.find("yadmNm")
-                    addrname = item.find("addr")
-                    clname = item.find("clCdNm")
-                    xpos = item.find("XPos")
-                    ypos = item.find("YPos")
-                    telno = item.find("telno")
-                    if clname == None or yadmname == None or addrname == None or xpos == None or ypos == None or telno==None:
-                        print("못찾음")
+                    yadmname = item.find("yadmNm").text
+                    addrname = item.find("addr").text
+                    clname = item.find("clCdNm").text
+                    if item.find("XPos")!=None:
+                        xpos = item.find("XPos").text
+                    else: xpos=None
+                    if item.find("Ypos"):
+                        ypos = item.find("YPos").text
+                    else: ypos=None
+                    if item.find("telno")!=None:
+                        telno = item.find("telno").text
                     else:
-                        data = hospi(yadmname.text, addrname.text, clname.text, xpos.text, ypos.text, telno.text)
-                        m_count += 1
-                        Hdata.append(data)
+                        telno=None
+                    if item.find("hospUrl")!=None:
+                        url = item.find("hospUrl").text
+                    else :
+                        url=None
+                    data = hospi(yadmname, addrname, clname, xpos, ypos, telno,url)
+                    m_count += 1
+                    Hdata.append(data)
             self.ui.tableWidget.setRowCount(m_count)
             for item in range(m_count):
                 self.ui.tableWidget.setItem(samplenum, 0, QtGui.QTableWidgetItem(Hdata[item].yadm))
