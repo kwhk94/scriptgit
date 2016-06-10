@@ -69,16 +69,6 @@
      <string>길찾기</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>380</width>
-      <height>70</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton_5">
     <property name="geometry">
      <rect>
@@ -90,6 +80,16 @@
     </property>
     <property name="text">
      <string>홈페이지</string>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="textBrowser">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>381</width>
+      <height>71</height>
+     </rect>
     </property>
    </widget>
   </widget>
