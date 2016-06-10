@@ -66,6 +66,8 @@ def launcherFunction(menu):
             print("시,도에대한 정보가없습니다.")
         elif Hname == None:
             print("병원이름에대한정보가없습니다.")
+        elif Hdata == []:
+            print("출력에 대한 정보가 없습니다")
         else:
             mail();
 #    elif menu == 'b':
