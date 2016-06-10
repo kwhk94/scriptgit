@@ -23,6 +23,7 @@ sgguName=None
 Hname=None
 Hdata = []
 
+m='경기'
 
 
 #### Menu  implementation
@@ -165,24 +166,29 @@ def nearhospital():
 
    
 def mail():
-    s = smtplib.SMTP("smtp.gmail.com", 587)
-    s.ehlo()
-    s.starttls()
-    s.ehlo()
+    global Hdata
     ID = input("(gmail)ID : ") + "@gmail.com"
     password= input("password : ")
     senderAddr = ID # 보내는 사람
     title = input(" 제목 : ")
     recipientAddr = input("받는 사람:")  # 받는 사람
-    text = input(" 내용 : ")  # 보내는 내용
-
-
+    data=""
+    for i in Hdata:
+        data= data + "병원 이름 : " + i.yadm + "\n" + "주소 : " + i.addr + "\n"+"\n"
+    print(data,Hdata[0].yadm)     #확인용 출력
+    text = data
+     
     msg = MIMEText(text, _charset='utf8')
-
     msg['Subject'] = Header(title, 'utf8')
     msg['From'] = senderAddr
     msg['To'] = recipientAddr
+    
 
+    s = smtplib.SMTP("smtp.gmail.com", 587)
+    s.ehlo()
+    s.starttls()
+    s.ehlo()    
+    
     s.login(ID, password)
     s.sendmail(senderAddr, recipientAddr, msg.as_string())
     s.quit()
