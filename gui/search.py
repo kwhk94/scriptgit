@@ -142,7 +142,7 @@ class Ui_mainWindow(object):
         item = self.tableWidget.horizontalHeaderItem(1)
         item.setText(_translate("Form", "주소", None))
         item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(_translate("Form", "xpos", None))
+        item.setText(_translate("Form", "종별", None))
         item = self.tableWidget.horizontalHeaderItem(3)
-        item.setText(_translate("Form", "ypos", None))
+        item.setText(_translate("Form", "tel.no", None))
 

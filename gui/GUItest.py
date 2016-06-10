@@ -155,8 +155,8 @@ class SearchForm(QtGui.QMainWindow):
             for item in range(m_count):
                 self.ui.tableWidget.setItem(samplenum, 0, QtGui.QTableWidgetItem(Hdata[item].yadm))
                 self.ui.tableWidget.setItem(samplenum, 1, QtGui.QTableWidgetItem(Hdata[item].addr))
-                self.ui.tableWidget.setItem(samplenum, 2, QtGui.QTableWidgetItem(Hdata[item].xpos))
-                self.ui.tableWidget.setItem(samplenum, 3, QtGui.QTableWidgetItem(Hdata[item].ypos))
+                self.ui.tableWidget.setItem(samplenum, 2, QtGui.QTableWidgetItem(Hdata[item].cl))
+                self.ui.tableWidget.setItem(samplenum, 3, QtGui.QTableWidgetItem(Hdata[item].telno))
                 samplenum += 1
 
 
@@ -189,18 +189,22 @@ class SearchForm(QtGui.QMainWindow):
 
     def selectionchange(self):
         global  conn,Hospital,Code,sidoName,sggunumber,ssgname
-        print(self.ui.comboBox.itemText(self.ui.comboBox.currentIndex()))
+        #print(self.ui.comboBox.itemText(self.ui.comboBox.currentIndex()))
         sido = self.ui.comboBox.itemText(self.ui.comboBox.currentIndex())
         sidoName = "sidoCd=" + Code[sido] + "&"  # 읽어올 파일경로를 입력 받습니다.
         self.sidohttp()
         tree = ElementTree.fromstring(HospitalDoc.read().decode('utf-8'))
         itemElements = tree.getiterator("item")  # return list type
         sggulist = []
-        for i in range(sggunumber):
-            self.ui.comboBox_2.removeItem(i)
+
+        print(sggunumber)
+
+        while self.ui.comboBox_2.itemText(0)!="":
+            self.ui.comboBox_2.removeItem(0)
             #self.ui.comboBox_2.setItemText(i, _translate("mainWindow", "", None))
 
         sggunumber = 0
+
         for item in itemElements:
             check = True
             for i in range(sggunumber):
@@ -209,21 +213,23 @@ class SearchForm(QtGui.QMainWindow):
             if check == True:
                 sggulist.append(item.find("sgguCdNm").text)
                 sggunumber += 1
-        for i in range(sggunumber):
-            if i % 10 == 0:
-                print()
-            print(sggulist[i], end=" ")
+        #for i in range(sggunumber):
+            #if i % 10 == 0:
+                #print(sggulist[i], end=" ")
+
+
         print("")
         print("-----------------------------------------")
         self.sidohttp()
        # Hospital = self.ui.comboBox.itemText(self.ui.comboBox.currentIndex())
 
         samplenumber = 0
-        for i in sggulist:
-            if samplenumber>sggunumber:
-                self.ui.comboBox_2.addItem(_fromUtf8(""))
-            self.ui.comboBox_2.setItemText(samplenumber, _translate("mainWindow", i, None))
+        print(sggunumber)
+        for i in range(sggunumber):
+            self.ui.comboBox_2.addItem(_fromUtf8(sggulist[i]))
+            #self.ui.comboBox_2.setItemText(samplenumber, _translate("mainWindow", sggulist[i], None))
             samplenumber += 1
+
         self.changessgname()
 
 
