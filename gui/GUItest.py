@@ -81,6 +81,7 @@ class MyForm(QtGui.QMainWindow):
         if finaldata != None:
             self.search = NearForm()
             self.search.show()
+            self.close()
 
 
 class NearForm(QtGui.QMainWindow):
@@ -88,7 +89,7 @@ class NearForm(QtGui.QMainWindow):
         QtGui.QWidget.__init__(self, parent)
         self.ui = near.Ui_Form()
         self.ui.setupUi(self)
-        global Code, sidoName, conn, HospitalDoc, sggunumber, ssgname
+        global Code, sidoName, conn, HospitalDoc, sggunumber, ssgname,Neardata,m_neardata
         conn = HTTPConnection("openapi.hira.or.kr")
         conn.request("GET",
                      "/openapi/service/hospInfoService/getHospBasisList?" + sidoName + "numOfRows=100&ServiceKey=Id4vjBVQEtf9S3cDoQcUnmSSidJLPlzQIflfPq2Nr2n6CTK5OBvtYqDU3T0skasLZybrxivIfIXiNXRs1%2Bhdlg%3D%3D")
@@ -96,6 +97,7 @@ class NearForm(QtGui.QMainWindow):
         print(req.status, req.reason)
         HospitalDoc = req
         Neardata = []
+
         tree = ElementTree.fromstring(HospitalDoc.read().decode('utf-8'))
         itemElements = tree.getiterator("item")  # return list type
         count = 0
@@ -133,6 +135,7 @@ class NearForm(QtGui.QMainWindow):
         self.ui.tableWidget.setRowCount(samplenum)
 
         rownum = 0
+        m_neardata=[]
         for nana in range(count):
             print(Neardata[nana].yadm,Neardata[nana].addr,Neardata[nana].xpos,Neardata[nana].ypos)
             if Neardata[nana].xpos!=None and Neardata[nana].ypos!=None:
@@ -141,7 +144,21 @@ class NearForm(QtGui.QMainWindow):
                     self.ui.tableWidget.setItem(rownum, 1, QtGui.QTableWidgetItem(Neardata[nana].addr))
                     self.ui.tableWidget.setItem(rownum, 2, QtGui.QTableWidgetItem(Neardata[nana].url))
                     self.ui.tableWidget.setItem(rownum, 3, QtGui.QTableWidgetItem(Neardata[nana].telno))
+                    m_neardata.append(Neardata[nana])
                     rownum += 1
+    def slot1_click(self):
+        global finaldata, Hdata,m_neardata
+        finaldata = m_neardata[self.ui.tableWidget.currentRow()]
+        print(self.ui.tableWidget.currentRow())
+        print(finaldata)
+        self.MyForm = MyForm()
+        self.MyForm.show()
+        self.close()
+
+    def slot2_click(self):
+        self.MyForm = MyForm()
+        self.MyForm.show()
+        self.close()
 
 
 
