@@ -25,6 +25,7 @@ from email.mime.text import MIMEText
 from email.header import Header
 from hospital import Hospihal as hospi
 from xml.etree import ElementTree
+import near
 
 
 ##### global
@@ -59,6 +60,7 @@ class MyForm(QtGui.QMainWindow):
 
     def slot2_click(self):
         if finaldata!=None:
+            print(finaldata.xpos,finaldata.ypos)
             if finaldata.xpos!=None and finaldata.ypos!=None:
                 url='https://www.google.co.kr/maps/@'+finaldata.ypos+','+finaldata.xpos+',17z'
                 webbrowser.open_new(url)
@@ -74,6 +76,74 @@ class MyForm(QtGui.QMainWindow):
             else:
                 print("주소가없습니다.")
                 self.ui.textBrowser.append("주소가없습니다")
+
+    def slot4_click(self):
+        if finaldata != None:
+            self.search = NearForm()
+            self.search.show()
+
+
+class NearForm(QtGui.QMainWindow):
+    def __init__(self,parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.ui = near.Ui_Form()
+        self.ui.setupUi(self)
+        global Code, sidoName, conn, HospitalDoc, sggunumber, ssgname
+        conn = HTTPConnection("openapi.hira.or.kr")
+        conn.request("GET",
+                     "/openapi/service/hospInfoService/getHospBasisList?" + sidoName + "numOfRows=100&ServiceKey=Id4vjBVQEtf9S3cDoQcUnmSSidJLPlzQIflfPq2Nr2n6CTK5OBvtYqDU3T0skasLZybrxivIfIXiNXRs1%2Bhdlg%3D%3D")
+        req = conn.getresponse()
+        print(req.status, req.reason)
+        HospitalDoc = req
+        Neardata = []
+        tree = ElementTree.fromstring(HospitalDoc.read().decode('utf-8'))
+        itemElements = tree.getiterator("item")  # return list type
+        count = 0
+        data = hospi
+        for item in itemElements:
+                yadmname = item.find("yadmNm").text
+                addrname = item.find("addr").text
+                clname = item.find("clCdNm").text
+                if item.find("XPos") != None:
+                    xpos = item.find("XPos").text
+                else:
+                    xpos = None
+                if item.find("YPos") != None:
+                    ypos = item.find("YPos").text
+                else:
+                    ypos = None
+                if item.find("telno") != None:
+                    telno = item.find("telno").text
+                else:
+                    telno = None
+                if item.find("hospUrl") != None:
+                    url = item.find("hospUrl").text
+                else:
+                    url = None
+                data = hospi(yadmname, addrname, clname, xpos, ypos, telno, url)
+                count += 1
+                Neardata.append(data)
+        samplenum=0
+        for nana in range(count):
+            if Neardata[nana].xpos != None and Neardata[nana].ypos != None:
+                if float(finaldata.xpos) - 0.05 < float(Neardata[nana].xpos) and float(finaldata.xpos) + 0.05 > float(
+                    Neardata[nana].xpos) and float(finaldata.ypos) - 0.05 < float(Neardata[nana].ypos) and float(
+                    finaldata.ypos) + 0.05 > float(Neardata[nana].ypos):
+                    samplenum+=1
+        self.ui.tableWidget.setRowCount(samplenum)
+
+        rownum = 0
+        for nana in range(count):
+            print(Neardata[nana].yadm,Neardata[nana].addr,Neardata[nana].xpos,Neardata[nana].ypos)
+            if Neardata[nana].xpos!=None and Neardata[nana].ypos!=None:
+                if float(finaldata.xpos) - 0.05 < float(Neardata[nana].xpos) and float(finaldata.xpos) + 0.05 > float(Neardata[nana].xpos) and float(finaldata.ypos) - 0.05 < float(Neardata[nana].ypos) and float(finaldata.ypos) + 0.05 > float(Neardata[nana].ypos):
+                    self.ui.tableWidget.setItem(rownum, 0, QtGui.QTableWidgetItem(Neardata[nana].yadm))
+                    self.ui.tableWidget.setItem(rownum, 1, QtGui.QTableWidgetItem(Neardata[nana].addr))
+                    self.ui.tableWidget.setItem(rownum, 2, QtGui.QTableWidgetItem(Neardata[nana].url))
+                    self.ui.tableWidget.setItem(rownum, 3, QtGui.QTableWidgetItem(Neardata[nana].telno))
+                    rownum += 1
+
+
 
 
 
@@ -170,10 +240,12 @@ class SearchForm(QtGui.QMainWindow):
                     clname = item.find("clCdNm").text
                     if item.find("XPos")!=None:
                         xpos = item.find("XPos").text
-                    else: xpos=None
-                    if item.find("Ypos"):
+                    else:
+                        xpos=None
+                    if item.find("YPos")!=None:
                         ypos = item.find("YPos").text
-                    else: ypos=None
+                    else:
+                        ypos=None
                     if item.find("telno")!=None:
                         telno = item.find("telno").text
                     else:
@@ -189,8 +261,10 @@ class SearchForm(QtGui.QMainWindow):
             for item in range(m_count):
                 self.ui.tableWidget.setItem(samplenum, 0, QtGui.QTableWidgetItem(Hdata[item].yadm))
                 self.ui.tableWidget.setItem(samplenum, 1, QtGui.QTableWidgetItem(Hdata[item].addr))
-                self.ui.tableWidget.setItem(samplenum, 2, QtGui.QTableWidgetItem(Hdata[item].cl))
+                self.ui.tableWidget.setItem(samplenum, 2, QtGui.QTableWidgetItem(Hdata[item].url))
                 self.ui.tableWidget.setItem(samplenum, 3, QtGui.QTableWidgetItem(Hdata[item].telno))
+                self.ui.tableWidget.setItem(samplenum, 4, QtGui.QTableWidgetItem(Hdata[item].cl))
+
                 samplenum += 1
 
 
