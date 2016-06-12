@@ -15,6 +15,7 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 import hosdata
 import search
 import webbrowser
@@ -26,7 +27,7 @@ from email.header import Header
 from hospital import Hospihal as hospi
 from xml.etree import ElementTree
 import near
-
+import mail
 
 ##### global
 BooksDoc = None
@@ -34,6 +35,9 @@ sidoName=None
 sgguName=None
 Hname=None
 Hdata = []
+ID=""
+password=""
+recipientAddr=""
 finaldata=None
 m_count=0
 HospitalDoc=None
@@ -52,13 +56,13 @@ class MyForm(QtGui.QMainWindow):
             self.ui.textBrowser.append(finaldata.url)
        # self.show(self)
 
-    def slot1_click(self):
+    def slot1_click(self): #검색
          self.search=SearchForm()
          self.search.show()
          self.close()
          return
 
-    def slot2_click(self):
+    def slot2_click(self): #지도
         if finaldata!=None:
             print(finaldata.xpos,finaldata.ypos)
             if finaldata.xpos!=None and finaldata.ypos!=None:
@@ -68,7 +72,7 @@ class MyForm(QtGui.QMainWindow):
                 print("좌표가없습니다")
                 self.ui.textBrowser.append("좌표가없습니다")
 
-    def slot3_click(self):
+    def slot3_click(self): #홈페이지
         if finaldata!=None:
             if finaldata.url!=None:
                 url = finaldata.url
@@ -77,13 +81,66 @@ class MyForm(QtGui.QMainWindow):
                 print("주소가없습니다.")
                 self.ui.textBrowser.append("주소가없습니다")
 
-    def slot4_click(self):
+    def slot4_click(self): #인근병원
+        print("클릭")
         if finaldata != None:
+            print("클릭1")
             self.search = NearForm()
+            print("클릭2")
             self.search.show()
+            print("클릭3")
             self.close()
-
-
+            print("클릭4")
+            
+    def slot5_click(self): #길찾기
+        if finaldata!=None:
+           print(finaldata.xpos,finaldata.ypos)
+           if finaldata.xpos!=None and finaldata.ypos!=None:
+               url='https://www.google.co.kr/maps/dir//'+finaldata.ypos+','+finaldata.xpos+'/@'+finaldata.ypos+','+finaldata.xpos+',17z'
+               webbrowser.open_new(url)
+           else:
+               print("좌표가없습니다")
+               self.ui.textBrowser.append("좌표가없습니다")
+               
+    def slot6_click(self): #메일
+        if finaldata != None:
+            self.mail = mailForm()
+            self.mail.show()
+            self.close()
+            
+class mailForm(QtGui.QMainWindow):
+    def __init__(self,parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.ui = mail.Ui_dialog()
+        self.ui.setupUi(self)
+    def slot1_click(self):
+        maildata=""
+        global finaldata
+        maildata = maildata + finaldata.yadm + "\n"+ finaldata.addr
+        text = maildata
+        self.MyForm = MyForm()
+        self.MyForm.show()
+        self.close()
+    def slot3_click(self):
+        self.MyForm = MyForm()
+        self.MyForm.show()
+        self.close()
+     
+def sendmail(ID,password,senderAddr, recipientAddr,text):
+    title="병원정보"
+    ID = ID + "@gmail.com"
+    msg = MIMEText(text, _charset='utf8')
+    msg['Subject'] = Header(title, 'utf8')
+    msg['From'] = senderAddr
+    msg['To'] = recipientAddr
+    s = smtplib.SMTP("smtp.gmail.com", 587)
+    s.ehlo()
+    s.starttls()
+    s.ehlo()    
+    s.login(ID, password)
+    s.sendmail(senderAddr, recipientAddr, msg.as_string())
+    s.quit()
+     
 class NearForm(QtGui.QMainWindow):
     def __init__(self,parent=None):
         QtGui.QWidget.__init__(self, parent)

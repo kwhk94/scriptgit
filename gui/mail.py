@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_dialog(object):
     def setupUi(self, dialog):
         dialog.setObjectName(_fromUtf8("dialog"))
-        dialog.resize(313, 260)
+        dialog.resize(320, 250)
         self.textEdit = QtGui.QTextEdit(dialog)
         self.textEdit.setGeometry(QtCore.QRect(80, 20, 201, 31))
         self.textEdit.setObjectName(_fromUtf8("textEdit"))
@@ -45,11 +45,16 @@ class Ui_dialog(object):
         self.textEdit_3.setGeometry(QtCore.QRect(80, 130, 201, 31))
         self.textEdit_3.setObjectName(_fromUtf8("textEdit_3"))
         self.pushButton = QtGui.QPushButton(dialog)
-        self.pushButton.setGeometry(QtCore.QRect(70, 180, 181, 51))
+        self.pushButton.setGeometry(QtCore.QRect(10, 180, 140, 50))
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
+        self.pushButton_3 = QtGui.QPushButton(dialog)
+        self.pushButton_3.setGeometry(QtCore.QRect(160, 180, 140, 50))
+        self.pushButton_3.setObjectName(_fromUtf8("pushButton"))
 
         self.retranslateUi(dialog)
         QtCore.QMetaObject.connectSlotsByName(dialog)
+        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), dialog.slot1_click)
+        QtCore.QObject.connect(self.pushButton_3, QtCore.SIGNAL(_fromUtf8("clicked()")), dialog.slot3_click)
 
     def retranslateUi(self, dialog):
         dialog.setWindowTitle(_translate("dialog", "메일", None))
@@ -57,4 +62,5 @@ class Ui_dialog(object):
         self.label_2.setText(_translate("dialog", "password", None))
         self.label_3.setText(_translate("dialog", "받는 사람", None))
         self.pushButton.setText(_translate("dialog", "보내기", None))
+        self.pushButton_3.setText(_translate("dialog", "나가기", None))
 

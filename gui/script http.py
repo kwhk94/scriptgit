@@ -172,7 +172,7 @@ def mail():
     ID = input("(gmail)ID : ") + "@gmail.com"
     password= input("password : ")
     senderAddr = ID # 보내는 사람
-    title = input(" 제목 : ")
+    title = "병원 정보"
     recipientAddr = input("받는 사람:")  # 받는 사람
     data=""
     for i in Hdata:
