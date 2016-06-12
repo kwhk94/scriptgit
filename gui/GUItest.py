@@ -82,15 +82,10 @@ class MyForm(QtGui.QMainWindow):
                 self.ui.textBrowser.append("주소가없습니다")
 
     def slot4_click(self): #인근병원
-        print("클릭")
         if finaldata != None:
-            print("클릭1")
             self.search = NearForm()
-            print("클릭2")
             self.search.show()
-            print("클릭3")
             self.close()
-            print("클릭4")
             
     def slot5_click(self): #길찾기
         if finaldata!=None:
@@ -115,10 +110,12 @@ class mailForm(QtGui.QMainWindow):
         self.ui.setupUi(self)
     def slot1_click(self):
         #global ID,password,senderAddr
-        self.ID = quote(self.ui.textEdit.text())
-        self.password = quote(self.ui.textEdit_2.text())
+        print("뭐지",self.ui.textEdit.toPlainText())
+        self.ID = quote(self.ui.textEdit.toPlainText())
+       
+        self.password = quote(self.ui.textEdit_2.toPlainText())
         senderAddr = self.ID
-        self.recipientAddr = quote(self.ui.textEdit_3.text())
+        self.recipientAddr = quote(self.ui.textEdit_3.toPlainText())
         maildata=""
         global finaldata
         maildata = maildata + finaldata.yadm + "\n"+ finaldata.addr
@@ -135,6 +132,7 @@ class mailForm(QtGui.QMainWindow):
 def sendmail(ID,password,senderAddr, recipientAddr,text):
     title="병원정보"
     ID = ID + "@gmail.com"
+    recipientAddr = recipientAddr + "@gmail.com"
     msg = MIMEText(text, _charset='utf8')
     msg['Subject'] = Header(title, 'utf8')
     msg['From'] = senderAddr
