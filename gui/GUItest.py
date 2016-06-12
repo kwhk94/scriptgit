@@ -114,10 +114,16 @@ class mailForm(QtGui.QMainWindow):
         self.ui = mail.Ui_dialog()
         self.ui.setupUi(self)
     def slot1_click(self):
+        #global ID,password,senderAddr
+        self.ID = quote(self.ui.textEdit.text())
+        self.password = quote(self.ui.textEdit_2.text())
+        senderAddr = self.ID
+        self.recipientAddr = quote(self.ui.textEdit_3.text())
         maildata=""
         global finaldata
         maildata = maildata + finaldata.yadm + "\n"+ finaldata.addr
         text = maildata
+        sendmail(self.ID,self.password,senderAddr, self.recipientAddr,text)
         self.MyForm = MyForm()
         self.MyForm.show()
         self.close()
