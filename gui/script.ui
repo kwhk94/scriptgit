@@ -35,7 +35,7 @@
      <rect>
       <x>10</x>
       <y>100</y>
-      <width>180</width>
+      <width>120</width>
       <height>80</height>
      </rect>
     </property>
@@ -46,9 +46,9 @@
    <widget class="QPushButton" name="pushButton_3">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>270</x>
       <y>100</y>
-      <width>180</width>
+      <width>120</width>
       <height>80</height>
      </rect>
     </property>
@@ -90,6 +90,19 @@
       <width>381</width>
       <height>71</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_6">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>100</y>
+      <width>120</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>메일</string>
     </property>
    </widget>
   </widget>
